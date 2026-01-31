@@ -1,0 +1,12 @@
+@startuml
+actor User
+participant "service-a" as A
+participant "service-b" as B
+
+User -> A: POST /orders {sku, qty}
+A -> A: generate orderId
+A -> B: POST /reserve {orderId, sku, qty}
+... service-b is slow (DELAY_MS=5000) ...
+A -> A: timeout after 1s
+A --> User: 504 Gateway Timeout
+@enduml

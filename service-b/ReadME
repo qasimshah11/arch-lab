@@ -1,0 +1,33 @@
+# service-b (Downstream Dependency)
+
+## Purpose
+service-b simulates a downstream dependency (e.g., Inventory/Provisioning).
+It exposes `POST /reserve` and can be configured to respond slowly to test timeouts/retries.
+
+## Endpoints
+- `GET /health`
+- `POST /reserve`
+  - Request body:
+    ```json
+    { "orderId": "...", "sku": "SIP_TRUNK_01", "qty": 1 }
+    ```
+  - Response:
+    ```json
+    {
+      "reservationId": "r_<orderId>",
+      "status": "reserved",
+      "sku": "SIP_TRUNK_01",
+      "qty": 1
+    }
+    ```
+
+## Config (environment variables)
+- `PORT` (default 8001)
+- `DELAY_MS` (default 0)
+  - Adds artificial delay (in milliseconds) before responding.
+  - This is used later for timeout/retry drills.
+
+## Run (local without Docker)
+```bash
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8001
