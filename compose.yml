@@ -4,7 +4,8 @@ services:
       context: ./service-b
     environment:
       - PORT=8001
-      - DELAY_MS=5000 # was 0 
+      - DELAY_MS=0 # was 5000
+      - FAIL_AFTER_STORE_ONCE=1
     ports:
       - "8001:8001"
 
