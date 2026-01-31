@@ -1,0 +1,18 @@
+@startuml
+actor User
+participant "service-a" as A
+participant "service-b" as B
+
+User -> A: POST /orders {sku, qty}
+A -> A: generate orderId
+
+A -> B: POST /reserve {orderId,...} (attempt 1)
+B -> B: CREATE reservation + store result
+B --> A: 500 (simulated failure after side effect)
+
+A -> B: POST /reserve {orderId,...} (attempt 2)
+B -> B: REPLAY stored reservation (idempotent)
+B --> A: 200 {same reservationId}
+
+A --> User: 201 Created (order + reservation)
+@enduml
