@@ -41,6 +41,7 @@ async def create_order(req: CreateOrderRequest):
                     f"{SERVICE_B_BASE_URL}/reserve",
                     json={"orderId": order_id, "sku": req.sku, "qty": req.qty},
                 )
+                print(f"[service-a] reserve attempt {attempt} for orderId={order_id}", flush=True)
                 resp.raise_for_status()
                 reservation = resp.json()
                 break  # success, exit retry loop
