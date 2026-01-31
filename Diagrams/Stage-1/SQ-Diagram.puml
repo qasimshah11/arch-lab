@@ -1,0 +1,11 @@
+@startuml
+actor User
+participant "service-a" as A
+participant "service-b" as B
+
+User -> A: POST /orders {sku, qty}
+A -> A: validate + generate orderId
+A -> B: POST /reserve {orderId, sku, qty}
+B --> A: 200 {reservationId, status=reserved}
+A --> User: 201 {orderId, status=created, reservation}
+@enduml

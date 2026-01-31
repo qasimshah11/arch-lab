@@ -1,0 +1,42 @@
+# service-a (Entry API)
+
+## Purpose
+service-a is the "front door" API in this lab. It exposes `POST /orders` and calls service-b to reserve stock.
+
+## Endpoints
+- `GET /health`
+  - Returns status and the configured downstream URL (`SERVICE_B_BASE_URL`)
+
+- `POST /orders`
+  - Request body:
+    ```json
+    { "sku": "SIP_TRUNK_01", "qty": 1 }
+    ```
+  - Behaviour:
+    1) validates request
+    2) generates `orderId`
+    3) calls service-b `POST /reserve`
+    4) returns combined response
+  - Response (success):
+    ```json
+    {
+      "orderId": "...",
+      "status": "created",
+      "reservation": {
+        "reservationId": "r_...",
+        "status": "reserved",
+        "sku": "SIP_TRUNK_01",
+        "qty": 1
+      }
+    }
+    ```
+
+## Config (environment variables)
+- `PORT` (default 8000): port to run on
+- `SERVICE_B_BASE_URL` (default http://localhost:8001):
+  - When running via Docker Compose, this should be `http://service-b:8001`
+
+## Run (local without Docker)
+```bash
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000
